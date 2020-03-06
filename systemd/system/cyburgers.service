@@ -1,0 +1,9 @@
+[Unit]
+Description=bunq integrations
+Wants=network-online.target
+
+[Service]
+ExecStart=/home/qguv/dev/cyburgers/.venv/bin/python /home/qguv/dev/cyburgers/cyburgers.py
+
+[Install]
+WantedBy=multi-user.target
