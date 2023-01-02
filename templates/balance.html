@@ -1,0 +1,22 @@
+{% extends "_base.html" %}
+
+{% block title %}{{ super() }} - balance{% endblock title %}
+
+{% block content %}
+  <h1>cyburgers</h1>
+
+  <h2>balance: {{balance}}</h2>
+
+  {% if transactions %}
+    <h2>transactions:</h2>
+    <ul>
+      {% for transaction in transactions | reverse %}
+        <li>{{ transaction }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <footer>
+    <a href="https://github.com/qguv/cyburgers">source on Github</a>
+  </footer>
+{% endblock %}

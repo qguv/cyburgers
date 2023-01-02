@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from flask import Flask, g
+from flask import Flask, g, render_template
 from thirdparty import bunq
 
 from os import environ
@@ -25,21 +25,17 @@ def balance():
     else:
         acct = bunq.named_account('cyburgers')
         account_id = acct.id_
-    balance = bunq.Amount.from_bunq(acct.balance)
-    payments = bunq.payments(account_id)
+    ctx = {}
+    ctx['balance'] = bunq.Amount.from_bunq(acct.balance)
+    ctx['transactions'] = [format_payment(p) for p in bunq.payments(account_id)]
+    return render_template('balance.html', **ctx)
 
-    msg = f"<h1>current balance: {balance}</h1>\n<ul>\n"
-    payments = list(payments)
-    if payments:
-        msg += '<h2>transactions:</h2>\n'
-    for payment in reversed(payments):
-        t = payment.created
-        amount = bunq.Amount.from_bunq(payment.amount)
-        action = f"spent {abs(amount)} for {payment.description}" if amount < 0 else f"someone donated {abs(amount)}, thanks!"
-        msg += f"<li>{t[:16]}: {action}</li>\n"
-    msg += '</ul>\n'
-    msg += '<p><a href="https://github.com/qguv/cyburgers">source on Github</a></p>'
-    return msg
+
+def format_payment(payment):
+    t = payment.created[:16]
+    amount = bunq.Amount.from_bunq(payment.amount)
+    action = f"spent {abs(amount)} for “{payment.description}”" if amount < 0 else f"someone donated {abs(amount)}, thanks!"
+    return f"{t}: {action}"
 
 
 if __name__ == "__main__":
