@@ -25,9 +25,15 @@ def balance():
     else:
         acct = bunq.named_account('cyburgers')
         account_id = acct.id_
+
+    payments = list(bunq.payments(account_id))
+    amounts = [bunq.Amount.from_bunq(p.amount) for p in payments]
+
     ctx = {}
     ctx['balance'] = bunq.Amount.from_bunq(acct.balance)
-    ctx['transactions'] = [format_payment(p) for p in bunq.payments(account_id)]
+    ctx['transactions'] = [format_payment(p) for p in payments]
+    ctx['received'] = bunq.Amount('EUR', cents=sum(a.cents for a in amounts if a > 0))
+    ctx['spent'] = bunq.Amount('EUR', cents=-sum(a.cents for a in amounts if a < 0))
     return render_template('balance.html', **ctx)
 
 

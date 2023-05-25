@@ -5,10 +5,15 @@
 {% block content %}
   <h1>cyburgers</h1>
 
-  <h2>balance: {{balance}}</h2>
+  <h2>balance</h2>
+  <ul>
+    <li>current: {{ balance }}</li>
+    <li>received: {{ received }}</li>
+    <li>spent: {{ spent }}</li>
+  </ul>
 
   {% if transactions %}
-    <h2>transactions:</h2>
+    <h2>transactions</h2>
     <ul>
       {% for transaction in transactions | reverse %}
         <li>{{ transaction }}</li>
