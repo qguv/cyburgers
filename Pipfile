@@ -9,6 +9,8 @@ flake8 = "~=5.0"
 [packages]
 flask = "~=2.3"
 bunq-sdk = "~=1.14"
+flask-caching = "~=2.1"
+flask-cachecontrol = "~=0.3"
 
 [requires]
 python_version = "3.8"

@@ -1,12 +1,22 @@
 #!/usr/bin/env python3
 
-from flask import Flask, g, render_template
+from flask import Flask, g, render_template, make_response
+from flask_caching import Cache
+from flask_cachecontrol import cache_for
 from thirdparty import bunq
 
 from os import environ
 from itertools import islice
+from datetime import datetime
+
+config = {
+    "CACHE_DEFAULT_TIMEOUT": 60,
+    "CACHE_TYPE": "SimpleCache",
+}
 
 app = Flask(__name__)
+app.config.from_mapping(config)
+cache = Cache(app)
 account_id = None
 
 
@@ -18,6 +28,8 @@ def before_request():
 
 
 @app.route("/balance")
+@cache_for(minutes=1)
+@cache.cached()
 def balance():
     global account_id
     if account_id:
@@ -34,6 +46,7 @@ def balance():
     ctx['transactions'] = [format_payment(p) for p in payments]
     ctx['received'] = bunq.Amount('EUR', cents=sum(a.cents for a in amounts if a > 0))
     ctx['spent'] = bunq.Amount('EUR', cents=-sum(a.cents for a in amounts if a < 0))
+    ctx['render_time'] = datetime.now()
     return render_template('balance.html', **ctx)
 
 
