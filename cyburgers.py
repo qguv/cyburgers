@@ -112,7 +112,9 @@ def is_next_month(scheduled_payment):
     now = datetime.utcnow()
 
     start_next_month = get_next_month(now)
-    if time_end := scheduled_payment.schedule.time_end is not None:
+    once = scheduled_payment.schedule.recurrence_unit == 'ONCE'
+    time_end = scheduled_payment.schedule.time_start if once else scheduled_payment.schedule.time_end
+    if time_end is not None:
         time_end = datetime.fromisoformat(time_end)
         if time_end < start_next_month:
             return False
