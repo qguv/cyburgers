@@ -110,8 +110,13 @@ def named_account(name):
 def account(account_id):
     return endpoint.MonetaryAccountBank.get(account_id).value
 
+
 def payments(account_id):
     return depaginate(endpoint.Payment, monetary_account_id=account_id)
+
+
+def scheduled_payments(account_id):
+    return depaginate(endpoint.SchedulePayment, monetary_account_id=account_id)
 
 
 def events(account_id):
