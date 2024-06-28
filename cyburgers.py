@@ -19,6 +19,7 @@ app.config.from_mapping(config)
 cache = Cache(app)
 scheduled_account_name = 'cyburgers'
 scheduled_id = None
+show_transactions = True
 
 # optional
 avail_name = None
@@ -44,13 +45,13 @@ def balance():
         scheduled_acct = bunq.named_account(scheduled_account_name)
         scheduled_id = scheduled_acct.id_
 
-    payments = list(bunq.payments(scheduled_id))
-    amounts = [bunq.Amount.from_bunq(p.amount) for p in payments]
+    payments = list(bunq.payments(scheduled_id)) if show_transactions else []
+    amounts = [bunq.Amount.from_bunq(p.amount) for p in payments] if show_transactions else []
 
     ctx = {}
     ctx['balance'] = bunq.Amount.from_bunq(scheduled_acct.balance)
     ctx['transactions'] = [format_payment(p) for p in payments]
-    ctx['received'] = bunq.Amount('EUR', cents=sum(a.cents for a in amounts if a > 0))
+    ctx['received'] = bunq.Amount('EUR', cents=sum(a.cents for a in amounts if a > 0)) if show_transactions else ctx['balance']
     ctx['spent'] = bunq.Amount('EUR', cents=-sum(a.cents for a in amounts if a < 0))
     ctx['render_time'] = datetime.now()
     return render_template('balance.html', **ctx)

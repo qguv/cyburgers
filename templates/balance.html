@@ -8,8 +8,10 @@
   <h2>balance</h2>
   <ul>
     <li>current: {{ balance }}</li>
-    <li>received: {{ received }}</li>
-    <li>spent: {{ spent }}</li>
+    {% if transactions %}
+        <li>received: {{ received }}</li>
+        <li>spent: {{ spent }}</li>
+    {% endif %}
   </ul>
 
   {% if transactions %}
