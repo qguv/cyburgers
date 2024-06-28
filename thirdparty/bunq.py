@@ -37,9 +37,11 @@ class Amount:
 
     def __str__(self):
         prefix = self.currency_symbol or f'{self.currency} '
-        whole = self.cents // 100
-        partial = self.cents % 100
-        return f'{prefix}{whole:01}.{partial:02}'
+        sign = '-' if self.cents < 0 else ''
+        cents = abs(self.cents)
+        whole = cents // 100
+        partial = cents % 100
+        return f'{prefix}{sign}{whole:01}.{partial:02}'
 
     def __neg__(self):
         return Amount(self.currency, -self.cents)
