@@ -1,0 +1,21 @@
+{% extends "_base.html" %}
+
+{% block title %}{{ super() }} - scheduled{% endblock title %}
+
+{% block content %}
+  <h1>cyburgers</h1>
+
+  <h2>scheduled</h2>
+  <ul>
+    <li>scheduled from income: {{ outgoing }} across {{ num_outgoing }} payments (of {{ num_all_outgoing }} total)</li>
+    <li>needed income: {{ needed_income }}</li>
+    <li>needed avail: {{ needed_avail }}</li>
+    <li><b>withdraw: {{ withdraw }}</b></li>
+  </ul>
+
+  <footer>
+    <a href="https://github.com/qguv/cyburgers">source on Github</a>
+    <br />
+    <span>rendered {{ render_time }}</span>
+  </footer>
+{% endblock %}
