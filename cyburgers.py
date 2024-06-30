@@ -17,14 +17,16 @@ config = {
 app = Flask(__name__)
 app.config.from_mapping(config)
 cache = Cache(app)
-scheduled_account_name = 'cyburgers'
+scheduled_account_name = environ.get('BUNQ_SCHEDULED_ACCOUNT_NAME', 'cyburgers')
 scheduled_id = None
-show_transactions = True
+show_transactions = environ.get('BUNQ_SHOW_TRANSACTIONS', '').lower() == 'true'
 
 # optional
-avail_name = None
+avail_name = environ.get('BUNQ_AVAIL_NAME')
 avail_id = None
-avail_target = None
+avail_target = environ.get('BUNQ_AVAIL_TARGET_CENTS')
+if avail_target is not None:
+    avail_target = int(avail_target)
 
 
 @app.before_request

@@ -7,12 +7,13 @@ from bunq.sdk.exception.bunq_exception import BunqException
 from bunq.sdk.json.anchor_object_adapter import AnchorObjectAdapter
 from bunq.sdk.model.generated import endpoint, object_
 
+from os import environ
 from pathlib import Path
 from dataclasses import dataclass
 import operator
 
 CONTEXTFILE = Path(__file__).parent.parent / ".bunq"
-DEVICE_DESCRIPTION = "cloud.guvernator.net"
+DEVICE_DESCRIPTION = environ.get('BUNQ_DEVICE_DESCRIPTION', 'cyburgers')
 
 
 @dataclass(frozen=True)
