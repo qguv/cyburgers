@@ -35,12 +35,14 @@ avail_target = environ.get('BUNQ_AVAIL_TARGET_CENTS')
 if avail_target is not None:
     avail_target = int(avail_target)
 
+bunq_init_done = False
+
 
 @app.before_request
 def before_request():
-    if not hasattr(g, 'init'):
+    if not bunq_init_done:
         bunq.init(lambda: environ["BUNQ_API_KEY"])
-        g.init = True
+        bunq_init_done = True
 
 
 @app.route('/ok')
