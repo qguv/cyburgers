@@ -43,6 +43,11 @@ def before_request():
         g.init = True
 
 
+@app.route('/ok')
+def healthcheck():
+    return 'ok', 200
+
+
 @app.route("/balance")
 @cache_for(minutes=1)
 @cache.cached()
