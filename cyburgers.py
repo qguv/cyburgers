@@ -3,6 +3,8 @@
 from flask import Flask, g, render_template, make_response
 from flask_caching import Cache
 from flask_cachecontrol import cache_for
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
+from werkzeug.wrappers import Response
 from thirdparty import bunq
 
 from os import environ
@@ -15,6 +17,11 @@ config = {
 }
 
 app = Flask(__name__)
+if 'SCRIPT_NAME' in environ:
+    app.wsgi_app = DispatcherMiddleware(
+        Response('Not Found', status=404),
+        {environ['SCRIPT_NAME']: app.wsgi_app},
+    )
 app.config.from_mapping(config)
 cache = Cache(app)
 scheduled_account_name = environ.get('BUNQ_SCHEDULED_ACCOUNT_NAME', 'cyburgers')
