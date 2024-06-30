@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from flask import Flask, g, render_template, make_response
+from flask import Flask, render_template
 from flask_caching import Cache
 from flask_cachecontrol import cache_for
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
@@ -8,7 +8,6 @@ from werkzeug.wrappers import Response
 from thirdparty import bunq
 
 from os import environ
-from itertools import islice
 from datetime import datetime
 
 config = {
@@ -40,6 +39,7 @@ bunq_init_done = False
 
 @app.before_request
 def before_request():
+    global bunq_init_done
     if not bunq_init_done:
         bunq.init(lambda: environ["BUNQ_API_KEY"])
         bunq_init_done = True
