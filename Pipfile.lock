@@ -1,11 +1,11 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "beb0c2a9f288c01b125db0533ae03d4dcf6943f1a52f0b957873da4dc5fddcd8"
+            "sha256": "ab48248d1ab2442042517ce1b545c3c1969bdb8b5cd73b22f764240bc6f770b6"
         },
         "pipfile-spec": 6,
         "requires": {
-            "python_version": "3.9"
+            "python_version": "3.12"
         },
         "sources": [
             {
@@ -37,6 +37,7 @@
                 "sha256:dbda6753a24ca4c6dd21548cbf07be021ffef75847596c75508a79b6d12aa4db"
             ],
             "index": "pypi",
+            "markers": "python_full_version >= '3.7.0'",
             "version": "==1.14.18"
         },
         "cachelib": {
@@ -172,6 +173,7 @@
                 "sha256:f69fcd559dc907ed196ab9df0e48471709175e696d6e698dd4dbe940f96ce66b"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.8'",
             "version": "==2.3.3"
         },
         "flask-cachecontrol": {
@@ -180,6 +182,7 @@
                 "sha256:39d10ce9dac835f926035b71eec5c8711b2625ecb27dd9b43f09a16ee5235e4e"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.3'",
             "version": "==0.3.0"
         },
         "flask-caching": {
@@ -188,6 +191,7 @@
                 "sha256:d7e4ca64a33b49feb339fcdd17e6ba25f5e01168cf885e53790e885f83a4d2cf"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.8'",
             "version": "==2.3.0"
         },
         "idna": {
@@ -197,14 +201,6 @@
             ],
             "markers": "python_version >= '3.5'",
             "version": "==3.7"
-        },
-        "importlib-metadata": {
-            "hashes": [
-                "sha256:15584cf2b1bf449d98ff8a6ff1abef57bf20f3ac6454f431736cd3e660921b2f",
-                "sha256:188bd24e4c346d3f0a933f275c2fec67050326a856b9a359881d7c2a697e8812"
-            ],
-            "markers": "python_version < '3.10'",
-            "version": "==8.0.0"
         },
         "itsdangerous": {
             "hashes": [
@@ -453,14 +449,6 @@
             ],
             "markers": "python_version >= '3.8'",
             "version": "==3.0.3"
-        },
-        "zipp": {
-            "hashes": [
-                "sha256:bf1dcf6450f873a13e952a29504887c89e6de7506209e5b1bcc3460135d4de19",
-                "sha256:f091755f667055f2d02b32c53771a7a6c8b47e1fdbc4b72a8b9072b3eef8015c"
-            ],
-            "markers": "python_version >= '3.8'",
-            "version": "==3.19.2"
         }
     },
     "develop": {
@@ -470,6 +458,7 @@
                 "sha256:7a1cf6b73744f5806ab95e526f6f0d8c01c66d7bbe349562d22dfca20610b248"
             ],
             "index": "pypi",
+            "markers": "python_full_version >= '3.6.1'",
             "version": "==5.0.4"
         },
         "mccabe": {
