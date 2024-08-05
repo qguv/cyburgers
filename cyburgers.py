@@ -66,7 +66,7 @@ def balance():
 
     ctx = {}
     ctx['balance'] = bunq.Amount.from_bunq(scheduled_acct.balance)
-    ctx['transactions'] = [format_payment(p) for p in payments]
+    ctx['transactions'] = [format_donation(p) for p in payments]
     ctx['received'] = bunq.Amount('EUR', cents=sum(a.cents for a in amounts if a > 0)) if show_transactions else ctx['balance']
     ctx['spent'] = bunq.Amount('EUR', cents=-sum(a.cents for a in amounts if a < 0))
     ctx['render_time'] = datetime.now()
@@ -140,7 +140,7 @@ def is_next_month(scheduled_payment):
     return time_start < end_next_month
 
 
-def format_payment(payment):
+def format_donation(payment):
     t = payment.created[:16]
     amount = bunq.Amount.from_bunq(payment.amount)
     action = f"spent {abs(amount)} for “{payment.description}”" if amount < 0 else f"someone donated {abs(amount)}, thanks!"
