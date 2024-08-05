@@ -7,7 +7,7 @@ view the balance of a shared bunq account
 ```bash
 git clone ssh://github.com/qguv/cyburgers
 pipenv install
-BUNQ_API_KEY=000000000000000000 pipenv run python cyburgers.py &
+BUNQ_API_KEY=000000000000000000 BUNQ_DEVICE_DESCRIPTION="$(hostname)" pipenv run python cyburgers.py &
 firefox https://localhost:5957/cyburgers/balance
 fg
 ```
