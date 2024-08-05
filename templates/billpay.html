@@ -15,11 +15,18 @@
 
   {% if last_month_payments %}
     <h2>last month payments</h2>
-    <ul>
-      {% for p in last_month_payments | reverse %}
-        <li>{{ p }}</li>
-      {% endfor %}
-    </ul>
+    <form>
+      <ul class="undecorated">
+        {% for p in last_month_payments | reverse %}
+          <li>
+            <label>
+                <input type="checkbox" data-cents="{{ p[1] }}" /> {{ p[0] }}
+            </label>
+          </li>
+        {% endfor %}
+      </ul>
+      <input type="submit" value="eliminate" />
+    </form>
   {% endif %}
 
   <footer>
@@ -27,4 +34,28 @@
     <br />
     <span>rendered {{ render_time }}</span>
   </footer>
+  <script type="module">
+
+    function submit_handler(ev) {
+      ev.preventDefault();
+
+      const checked_inputs = Array.from(ev.target.querySelectorAll('input:checked'));
+      const sum = checked_inputs.reduce((x, c) => x + +c.dataset.cents, 0);
+      if (sum !== 0) {
+        return;
+      }
+
+      for (const c of checked_inputs) {
+        c.disabled = true;
+      }
+    }
+
+    function loaded_handler() {
+      const form = document.querySelector('form');
+      form.addEventListener('submit', submit_handler);
+    }
+
+    document.addEventListener('DOMContentLoaded', loaded_handler);
+
+  </script>
 {% endblock %}

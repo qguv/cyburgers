@@ -111,7 +111,7 @@ def billpay():
     ctx['net_balance_this_month'] = net_balances_by_month[key_this_month]
     ctx['end_balance_last_month'] = end_balance_last_month
     ctx['net_balance_last_month'] = net_balances_by_month[key_last_month]
-    ctx['last_month_payments'] = [format_bill_payment(p) for p in payments_by_month[key_last_month]]
+    ctx['last_month_payments'] = [(format_bill_payment(p), bunq.Amount.from_bunq(p.amount).cents) for p in payments_by_month[key_last_month]]
     ctx['render_time'] = datetime.now()
     return render_template('billpay.html', **ctx)
 
@@ -216,8 +216,7 @@ def format_bill_payment(payment):
     t = payment.created[:16]
     amount = bunq.Amount.from_bunq(payment.amount)
     party = payment._counterparty_alias.label_monetary_account._display_name
-    verb = "took" if amount < 0 else "allocated"
-    return f"{t}: {party} {verb} {abs(amount)} for “{payment.description}”"
+    return f"{amount} by {party} for “{payment.description}”"
 
 
 if __name__ == "__main__":
