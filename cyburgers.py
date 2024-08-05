@@ -24,7 +24,7 @@ if 'SCRIPT_NAME' in environ:
     )
 app.config.from_mapping(config)
 cache = Cache(app)
-scheduled_account_name = environ.get('BUNQ_SCHEDULED_ACCOUNT_NAME', 'cyburgers')
+scheduled_account_name = environ.get('BUNQ_SCHEDULED_ACCOUNT_NAME', 'income')
 scheduled_id = None
 billpay_account_name = environ.get('BUNQ_BILLPAY_ACCOUNT_NAME', 'billpay')
 billpay_id = None
