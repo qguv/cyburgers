@@ -9,6 +9,7 @@ from thirdparty import bunq
 
 from os import environ
 from datetime import datetime
+import itertools
 
 config = {
     "CACHE_DEFAULT_TIMEOUT": 60,
@@ -25,6 +26,8 @@ app.config.from_mapping(config)
 cache = Cache(app)
 scheduled_account_name = environ.get('BUNQ_SCHEDULED_ACCOUNT_NAME', 'cyburgers')
 scheduled_id = None
+billpay_account_name = environ.get('BUNQ_BILLPAY_ACCOUNT_NAME', 'billpay')
+billpay_id = None
 show_transactions = environ.get('BUNQ_SHOW_TRANSACTIONS', '').lower() == 'true'
 
 # optional
@@ -71,6 +74,46 @@ def balance():
     ctx['spent'] = bunq.Amount('EUR', cents=-sum(a.cents for a in amounts if a < 0))
     ctx['render_time'] = datetime.now()
     return render_template('balance.html', **ctx)
+
+
+@app.route("/billpay")
+@cache_for(minutes=1)
+@cache.cached()
+def billpay():
+    global billpay_id
+    if billpay_id:
+        billpay_acct = bunq.account(billpay_id)
+    else:
+        billpay_acct = bunq.named_account(billpay_account_name)
+        billpay_id = billpay_acct.id_
+
+    now = datetime.utcnow()
+    key_this_month = month_key(now)
+    start_last_month = get_last_month(now)
+    key_last_month = month_key(start_last_month)
+
+    balance = bunq.Amount.from_bunq(billpay_acct.balance)
+
+    # limit payments to the ones since the start of last month (we don't care about the rest)
+    # XXX if this is empty, then we'll need to get payments in _descending_ time order
+    payments = itertools.takewhile(lambda p: start_last_month < datetime.fromisoformat(p.created), bunq.payments(billpay_id))
+
+    payments_by_month = by_month(payments)
+    payment_amounts_by_month = {k: [bunq.Amount.from_bunq(p.amount) for p in ps] for k, ps in payments_by_month.items()}
+    net_balances_by_month = {k: bunq.Amount('EUR', cents=sum(amt.cents for amt in amts)) for k, amts in payment_amounts_by_month.items()}
+
+    end_balance_last_month = bunq.Amount('EUR', cents=(
+        balance.cents - net_balances_by_month[key_this_month].cents
+    ))
+
+    ctx = {}
+    ctx['balance'] = balance
+    ctx['net_balance_this_month'] = net_balances_by_month[key_this_month]
+    ctx['end_balance_last_month'] = end_balance_last_month
+    ctx['net_balance_last_month'] = net_balances_by_month[key_last_month]
+    ctx['last_month_payments'] = [format_bill_payment(p) for p in payments_by_month[key_last_month]]
+    ctx['render_time'] = datetime.now()
+    return render_template('billpay.html', **ctx)
 
 
 @app.route("/scheduled")
@@ -124,6 +167,18 @@ def get_next_month(now):
     )
 
 
+def get_last_month(now):
+    return now.replace(
+        year=(now.year - 1 if now.month == 1 else now.year),
+        month=(12 if now.month == 1 else now.month - 1),
+        day=1,
+        hour=0,
+        minute=0,
+        second=0,
+        microsecond=0,
+    )
+
+
 def is_next_month(scheduled_payment):
     now = datetime.utcnow()
 
@@ -140,11 +195,29 @@ def is_next_month(scheduled_payment):
     return time_start < end_next_month
 
 
+def month_key(payment_or_datetime):
+    if isinstance(payment_or_datetime, datetime):
+        return payment_or_datetime.strftime('%Y-%m')
+    return payment_or_datetime.created[:7]
+
+
+def by_month(payments):
+    return {k: list(v) for k, v in itertools.groupby(payments, month_key)}
+
+
 def format_donation(payment):
     t = payment.created[:16]
     amount = bunq.Amount.from_bunq(payment.amount)
     action = f"spent {abs(amount)} for “{payment.description}”" if amount < 0 else f"someone donated {abs(amount)}, thanks!"
     return f"{t}: {action}"
+
+
+def format_bill_payment(payment):
+    t = payment.created[:16]
+    amount = bunq.Amount.from_bunq(payment.amount)
+    party = payment._counterparty_alias.label_monetary_account._display_name
+    verb = "took" if amount < 0 else "allocated"
+    return f"{t}: {party} {verb} {abs(amount)} for “{payment.description}”"
 
 
 if __name__ == "__main__":

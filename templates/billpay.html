@@ -1,0 +1,30 @@
+{% extends "_base.html" %}
+
+{% block title %}{{ super() }} - billpay{% endblock title %}
+
+{% block content %}
+  <h1>cyburgers</h1>
+
+  <h2>balance</h2>
+  <ul>
+    <li>current balance: {{ balance }}</li>
+    <li>net balance this month: {{ net_balance_this_month }}</li>
+    <li>end balance last month: {{ end_balance_last_month }}</li>
+    <li>net balance last month: {{ net_balance_last_month }}</li>
+  </ul>
+
+  {% if last_month_payments %}
+    <h2>last month payments</h2>
+    <ul>
+      {% for p in last_month_payments | reverse %}
+        <li>{{ p }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <footer>
+    <a href="https://github.com/qguv/cyburgers">source on Github</a>
+    <br />
+    <span>rendered {{ render_time }}</span>
+  </footer>
+{% endblock %}
