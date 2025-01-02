@@ -76,10 +76,11 @@ def balance():
     return render_template('balance.html', **ctx)
 
 
-@app.route("/billpay")
+@app.route("/billpay", defaults={'year': 0, 'month': 0})
+@app.route("/billpay/<int:year>-<int:month>")
 @cache_for(minutes=1)
 @cache.cached()
-def billpay():
+def billpay(year, month):
     global billpay_id
     if billpay_id:
         billpay_acct = bunq.account(billpay_id)
@@ -87,9 +88,9 @@ def billpay():
         billpay_acct = bunq.named_account(billpay_account_name)
         billpay_id = billpay_acct.id_
 
-    now = datetime.utcnow()
-    key_this_month = month_key(now)
-    start_last_month = get_last_month(now)
+    ref = datetime(year=year, month=month, day=1, hour=0, minute=0, second=0, microsecond=0) if month and year else datetime.utcnow()
+    key_this_month = month_key(ref)
+    start_last_month = get_last_month(ref)
     key_last_month = month_key(start_last_month)
 
     balance = bunq.Amount.from_bunq(billpay_acct.balance)
